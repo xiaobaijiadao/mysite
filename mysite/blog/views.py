@@ -26,4 +26,6 @@ def index(request):
 	]
 	return render(request, 'index.html', blog_display)
 
+def article(request):
+	return render(request, 'list.html')
 
