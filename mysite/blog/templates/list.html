@@ -1,122 +1,85 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
+{% extends "base.html" %}
 
+{% load static %}
 
-	{% include "load.html" %}
-	{% load static %}
-	<link rel="stylesheet" type="text/css" href="{% static "/css/base.css" %}">
-
-</head>
-
-<body>
-
-<header class="container face navbar-fixed-top">
-	<div class="row">
-		<div class="col-xs-11 col-md-offset-1 row" >
-			<div class="col-xs-3" style="height: 48px">
-				<div class="col-xs-4">
-					<img src="{% static "img/no_img.jpg"%}" style="width: 48px; height: 48px">
-				</div>
-				<p class="col-xs-4" style="font-size: 32px;">blank</p>
+{% block mainbody %}
+	
+{% for b in blogs %}
+	<div class="row" style="border-bottom: solid thin #AAAAAA; margin-bottom: 20px;padding-bottom: 10px;">
+		<div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;">
+			<div style="text-align: center; border-bottom: red solid thin;">
+				<p style="font-size: 25px; position:relative;top:10px;">{{ b.date_day }}</p>
 			</div>
-			<div class="col-xs-9">
-				<ul class="nav nav-pills col-xs-4 col-md-offset-8">
-					<li role="presentation" style="font: 20px black;"><a href="#">首页</a></li>
-					<li role="presentation" style="font: 20px black;"><a href="#">码农</a></li>
-					<li role="presentation" style="font: 20px black;"><a href="#">生活</a></li>
-				</ul>
+			<div style="text-align: center;">
+				<p style="text-align: 5px">{{ b.date_ym }}</p>
 			</div>
 		</div>
-	</div>
-</header>
-
-<div class="face row" style="background-color: #444444; height: 150px;margin-top: 48px;padding-top: 80px">
-	<div class="input-group col-xs-3 col-md-offset-8">
-      <input type="text" class="form-control" placeholder="输入关键字...">
-      <span class="input-group-btn">
-        <a class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
-      </span>
-    </div>
-</div>
-
-<div class="container" style="height: 1000px; margin-top: 50px;">
-	<div class="row">
-		<div class="col-xs-3" style="height: 1000px;">
-			<div>
-				<h3>近期文章</h3>
-				<ul>
-					<li style="font-size: 18px"><a>dac</a></li>
-				</ul>
-			</div>
-			<div>
-				<h3>时间归档</h3>
-				<ul>
-					<li style="font-size: 18px"><a>dac</a></li>
-				</ul>
-			</div>
-			<div>
-				<h3>分类目录</h3>
-				<ul>
-					<li style="font-size: 18px"><a>dac</a></li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-xs-9" style="height: 1000px;">
+		<div class="col-xs-11">
+			{% ifnotequal b.coverImg 'media/' %}
+			<img src="{% static b.coverImg %}" style="width: 100%; height: 200px;">
+			{% endifnotequal %}
 			<div class="row">
-				<div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;">
-					<div style="text-align: center; border-bottom: red solid thin;">
-						<p style="font-size: 25px; position:relative;top:10px;">04</p>
-					</div>
-					<div style="text-align: center;">
-						<p style="text-align: 5px">2017-9</p>
+				<div class="col-xs-1" style="height: 69px;padding-top: 22px;">
+					<div style="height: 35px; width: 35px; background-color: #FF5511; text-align: center;display:table;">
+						<span class="glyphicon glyphicon-pencil" aria-hidden="true" style="vertical-align:middle;display:table-cell;  "></span>
 					</div>
 				</div>
-				<div class="col-xs-11">
-					<img src="{% static "img/road.jpg"%}" style="width: 100%; height: 200px;">
-					<div class="row">
-						<div class="col-xs-1" style="height: 69px;padding-top: 22px;">
-							<div style="height: 35px; width: 35px; background-color: #FF5511; text-align: center;display:table;"><span class="glyphicon glyphicon-pencil" aria-hidden="true" style="vertical-align:middle;display:table-cell;  "></span></div>
-						</div>
-						<div class="col-xs-11" style="height: 69px;padding-left: 10px;">
-							<h1><a href="" style="font-weight: 10px; color: #444444;">title</a></h1>
-						</div>
-					</div>
-					<div>
-						<p style="color: #666666;">BY&nbsp;&nbsp;Blank&nbsp;&nbsp;&nbsp;点击&nbsp;&nbsp;1000</p>
-					</div>
-					<div style="padding-top: 5px;">
-						<p>第二届拍拍贷魔镜杯数据应用大赛于2017年4月10日启动，决赛路演于9月2日在上海举行。相较于去年，今年的题目更专注于实用性，对开发能力提出了更多更高的要求。比赛可以从以下三个参考方向来展开角逐，和去年的三个子赛题基本对应： 投标类：开发一款投标工具，帮助投资人实现投资收益的优化，并自动高效地完成从选标到投
-						</p>
-					</div>
-					<div class="col-xs-3 col-md-offset-9">
-						<a class="btn btn-block btn-default" role="button" href="" style="">阅读全文<span class="glyphicon glyphicon-menu-right" style="position: relative; left: 10px;"></span></a>
-					</div>
+				<div class="col-xs-11" style="height: 69px;padding-left: 10px;">
+					<h1><a href="{% url 'blog:blog_page' b.kind b.id %}" style="font-weight: 10px; color: #444444;">{{ b.title }}</a></h1>
+				</div>
+				<div class="col-xs-12">
+					<p style="color: #666666;">BY&nbsp;&nbsp;{{ b.author }}&nbsp;&nbsp;&nbsp;阅读&nbsp;&nbsp;{{ b.clickTimes }}</p>
+				</div>
+				<div class="col-xs-12" style="padding-top: 5px;">
+					<p>{{ b.summary }}</p>
+				</div>
+				<div class="col-xs-3">
+					<a href="{% url 'blog:blog_search_by_tag' b.tag %}"><span class="glyphicon glyphicon-tag" aria-hidden="true"></span>&nbsp;{{ b.tag }}</a>
+				</div>
+				<div class="col-xs-3 col-md-offset-6">
+					<a class="btn btn-block btn-default" role="button" href="{% url 'blog:blog_page' b.kind b.id %}" style="">阅读全文<span class="glyphicon glyphicon-menu-right" style="position: relative; left: 10px;"></span></a>
 				</div>
 			</div>
-			<nav class="col-xs-5 col-md-offset-4" aria-label="Page navigation">
-			  <ul class="pagination">
-			    <li>
-			      <a href="#" aria-label="Previous">
-			        <span aria-hidden="true">&laquo;</span>
-			      </a>
-			    </li>
-			    <li><a href="#">1</a></li>
-			    <li><a href="#">2</a></li>
-			    <li><a href="#">3</a></li>
-			    <li><a href="#">4</a></li>
-			    <li><a href="#">5</a></li>
-			    <li>
-			      <a href="#" aria-label="Next">
-			        <span aria-hidden="true">&raquo;</span>
-			      </a>
-			    </li>
-			  </ul>
-			</nav>
 		</div>
 	</div>
-</div>
+{% endfor %}
 
-</body>
-</html>
+{% if isPaging %}
+	<nav class="col-xs-5 col-md-offset-4" aria-label="Page navigation">
+		<ul class="pagination">
+			<li>
+			{% if blogs.has_previous %}
+				<a href="?page={{ blogs.previous_page_number }}" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			{% else %}
+				<a href="#" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			{% endif %}
+			</li>
+  			
+  			{% for page_number in blogs.paginator.page_range %}
+    			{% ifequal page_number blogs.number %}
+      				<li><a href="#">{{ page_number }}</a></li>
+    			{% else %}
+      				<li><a href="?page={{ page_number }}">{{ page_number }}</a></li>
+    			{% endifequal %}
+  			{% endfor %}
+
+
+  			<li>
+  			{% if blogs.has_next %}
+				<a href="?page={{ blogs.next_page_number }}" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			{% else %}
+				<a href="#" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			{% endif %}
+			</li>
+		</ul>
+	</nav>
+{% endif %}
+{% endblock %}

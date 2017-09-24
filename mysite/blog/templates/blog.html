@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "/css/blog.css" %}">
+<script type="text/javascript" src="{% static "/js/blog.js" %}"></script>
+{% endblock %}
+
+{% block mainbody %}
+
+	<div class="row" style="border-bottom: solid thin #AAAAAA;">
+		<div class="col-xs-1" style="padding-right: 0px;padding-left: 0px;">
+			<div style="text-align: center; border-bottom: red solid thin;">
+				<p style="font-size: 25px; position:relative;top:10px;">{{ blog.date_day }}</p>
+			</div>
+			<div style="text-align: center;">
+				<p style="text-align: 5px">{{ blog.date_ym }}</p>
+			</div>
+		</div>
+		<div class="col-xs-11">	
+			<div class="row">
+				<div class="col-xs-1" style="height: 69px;padding-top: 22px;">
+					<div style="height: 35px; width: 35px; background-color: #FF5511; text-align: center;display:table;">
+						<span class="glyphicon glyphicon-pencil" aria-hidden="true" style="vertical-align:middle;display:table-cell;  "></span>
+					</div>
+				</div>
+				<div class="col-xs-11" style="height: 69px;padding-left: 10px;">
+					<h1><a href="" style="font-weight: 10px; color: #444444;">{{ blog.title }}</a></h1>
+				</div>
+				<div style="padding: 0px 15px;">
+					<p style="color: #666666;">BY&nbsp;&nbsp;{{ blog.author }}&nbsp;&nbsp;&nbsp;点击&nbsp;&nbsp;{{ blog.clickTimes }}</p>
+				</div>
+				<div class="content">
+					{{ blog.content }}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 10px;">
+		<p class="col-xs-4">
+		{% ifnotequal blog.preId 0 %}
+			<a href="{% url 'blog:blog_page' blog.kind blog.preId %}"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>&nbsp;{{ blog.preTitle }}</a>
+		{% endifnotequal %}
+		</p>
+		<p class="col-xs-4 col-md-offset-4" style="text-align: right;">
+		{% ifnotequal blog.nextId 0 %}
+			<a href="{% url 'blog:blog_page' blog.kind blog.nextId %}">{{ blog.nextTitle }}&nbsp;<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a>
+		{% endifnotequal %}
+		</p>
+	</div> 
+
+	<div class="row">
+		<h3>评论</h3>
+		<ol class="comment-list" style="padding-left:40px; list-style: none;">
+			{% for comment in comments %}
+			<li class="comment" style="border-top: solid thin #AAAAAA;padding:10px 10px;">
+				<div class="comment-body">
+					<div class="row comment-at">
+						<div class="at col-xs-1" >
+							<img src="{% static comment.avatarSrc %}" style="width: 50px; height: 50px;">
+						</div>
+						<div class="at col-xs-3" style="height:50px;">
+							<p class="at-name" style="font-size: 20px; color: #E63F00; margin-bottom: 5px;">{{ comment.author }}</p>
+							<p class="at-time" style="font-size: 10px;margin-bottom: 0; color: #999999;">{{ comment.date }}</p>
+						</div>
+					</div>
+					<div class="commnet-content" style="padding:10px 10px 10px 40px;">
+						<p style="font-size: 14px; color: #555555;">{{ comment.content }}</p>
+						<div style="width: 100%; text-align: right;">
+							<a class="response" href="#comment">回复</a>
+							<p class="hidden">{{ comment.author }}</p>
+							<p class="hidden">{{ comment.id }}</p>
+						</div>
+					</div>
+					{% if comment.hasChildren %}
+					<ul class="comment-children" style="padding-left:40px; list-style: none;">
+						{% for child in comment.children %}
+						<li class="comment" style="border-top: solid thin #AAAAAA;padding:10px 10px;">
+							<div class="comment-body">
+								<div class="row comment-at">
+									<div class="at col-xs-1" >
+										<img src="{% static child.avatarSrc %}" style="width: 45px; height: 45px;">
+									</div>
+									<div class="at col-xs-3" style="height:50px;">
+										<p class="at-name" style="font-size: 18px; color: #E63F00; margin-bottom: 5px;">{{ child.author }}</p>
+										<p class="at-time" style="font-size: 8px;margin-bottom: 0; color: #999999;">{{ child.date }}</p>
+									</div>
+								</div>
+								<div class="commnet-content" style="padding:8px 10px 10px 40px;">
+									<p style="font-size: 13px; color: #555555;">{{ child.content }}</p>
+									<div style="width: 100%; text-align: right;">
+										<a class="response" href="#comment">回复</a>
+										<p class="hidden">{{ child.author }}</p>
+										<p class="hidden">{{ comment.id }}</p>
+									</div>
+								</div>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</div>
+			</li>
+			{% endfor %}
+		</ol>
+		<div id="comment" class="row" style="border-top: solid thin #AAAAAA; padding-top: 10px;">
+			<h3 id="response1" class="col-xs-4">发表评论</h3>
+			<h3 id="response2" class="col-xs-4 hidden">回复&nbsp;blank</h3>
+			<a id="deleteResponse" class="col-xs-2 col-md-offset-6" style="padding-top: 25px;" href="#comment">取消评论</a>
+			<form action="{% url 'blog:blog_comment' blog.kind blog.id %}" method="post"  id="comment_form">
+			{% csrf_token %}
+				<input type="hidden" id="parent_id" name="parent_id" value="0"/>
+				<div class="form-group">
+    				<textarea class="form-control" id="comment_content" name="comment_content" rows="7" cols="80" placeholder="请输入评论内容..."></textarea>
+    			</div>
+				<div class="form-group" style="text-align: center;">
+    				<input class="btn" id="submit" type="submit" value="点评一下">
+    				<p class="hidden" id="warning" style="color: red">评论不能为空！</p>
+    			</div>
+			</form>
+		</div>
+	</div>
+	
+
+{% endblock %}

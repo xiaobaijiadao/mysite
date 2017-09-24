@@ -1,0 +1,15 @@
+.content {
+	padding: 20px 15px;
+}
+
+
+.comment-list {
+	padding-left:40px; 
+	list-style: none;
+}
+
+.comment {
+	border-top: solid thin #AAAAAA;
+	padding:10px 10px;
+}
+
