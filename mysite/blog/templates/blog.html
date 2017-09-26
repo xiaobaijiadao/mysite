@@ -1,10 +1,24 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load my_markdown %}
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "/css/blog.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "/css/hilite.css" %}">
 <script type="text/javascript" src="{% static "/js/blog.js" %}"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		path = {{ pics | safe }}
+		$("#blog_content p img").each(function(i){
+			$(this).attr('src', '/static/'+path[i]);
+			$(this).parent().css('text-align', 'center');
+			if($(this).width()>600){
+				$(this).css("width", "100%");
+			}
+		});
+	})
+</script>
 {% endblock %}
 
 {% block mainbody %}
@@ -31,8 +45,8 @@
 				<div style="padding: 0px 15px;">
 					<p style="color: #666666;">BY&nbsp;&nbsp;{{ blog.author }}&nbsp;&nbsp;&nbsp;点击&nbsp;&nbsp;{{ blog.clickTimes }}</p>
 				</div>
-				<div class="content">
-					{{ blog.content }}
+				<div class="content" id="blog_content">
+					{{ blog.content | my_markdown }}
 				</div>
 			</div>
 		</div>
@@ -116,7 +130,7 @@
     				<textarea class="form-control" id="comment_content" name="comment_content" rows="7" cols="80" placeholder="请输入评论内容..."></textarea>
     			</div>
 				<div class="form-group" style="text-align: center;">
-    				<input class="btn" id="submit" type="submit" value="点评一下">
+    				<input class="btn btn-success" id="submit" type="submit" value="点评一下">
     				<p class="hidden" id="warning" style="color: red">评论不能为空！</p>
     			</div>
 			</form>

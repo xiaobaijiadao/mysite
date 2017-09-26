@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 from .models import User, Comment, Blog
-import random
+import random, json
+import markdown
 
 def index(request):
 	blog_display = {}
@@ -66,7 +67,6 @@ def article(request, kind='', tag = ''):
 
 def readAndFormatForArticle(way, key):
 	result = []
-
 	if way == 'kind':
 		blogs = Blog.objects.filter(kind=key).order_by('-id')
 	elif way == 'tag':
@@ -79,6 +79,7 @@ def readAndFormatForArticle(way, key):
 	length = len(blogs)
 	if length != 0:
 		for blog in  blogs:
+			content = str(blog.content).replace('`','').replace('#','')
 			b = dict(
 				title = blog.title, 
 				date_day = str(blog.date.day),
@@ -87,7 +88,7 @@ def readAndFormatForArticle(way, key):
 				coverImg = 'media/'+str(blog.cover),
 				author = blog.author,
 				clickTimes = blog.clickTimes,
-				summary = str(blog.content)[0:100] + '...',
+				summary = content[0:100] + '...' if len(content)>100 else content[0:100],
 				tag = blog.tag,
 				kind = blog.kind,
 			)
@@ -162,7 +163,7 @@ def blog(request, kind, blog_id):
 		date_ym = str(blog.date.year) + '-' + str(blog.date.month),
 		author = blog.author,
 		clickTimes = blog.clickTimes,
-		content = blog.content,
+		content = blog.content, 
 		tag = blog.tag,
 		kind = blog.kind,
 		preId = preBlogId,
@@ -170,12 +171,22 @@ def blog(request, kind, blog_id):
 		nextId = nextBlogId,
 		nextTitle = nextBlogTitle,
 	)
+	result['pics'] = json.dumps(getPics(blog))
 			
 	result['comments'] = getComments(blog_id)
 	result['recent_blog'] = getFirstFive()
 	result['classify_blog'] = getAllKind()
 
 	return render(request, 'blog.html', result)
+
+def getPics(blog):
+	pics = dict()
+	i = 0
+	for pic in blog.pics.all():
+		src = 'media/' + str(pic.img)
+		pics[i] = src
+		i += 1
+	return pics
 
 def getComments(blogId):
 	commentResult = []

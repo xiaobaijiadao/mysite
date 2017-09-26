@@ -40,7 +40,7 @@ class Blog(models.Model):
 		return self.title
 
 class Pic(models.Model):
-	belong = models.ForeignKey(Blog)
+	belong = models.ForeignKey(Blog, related_name='pics')
 	img = models.ImageField(upload_to = 'blog/%Y_%m', storage=ImageStorage())
 
 class User(models.Model):
